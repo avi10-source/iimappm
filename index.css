@@ -1,0 +1,51 @@
+:root {
+  /* Palette — warm paper & ink, grounded in the feeling of a written list */
+  --paper: #faf7f0;
+  --paper-raised: #f3efe5;
+  --ink: #1a1815;
+  --graphite: #6b6862;
+  --graphite-light: #a8a39a;
+  --sage: #7a8b6f;
+  --sage-tint: #e8ede3;
+  --clay: #b5573a;
+  --clay-tint: #f5e6e0;
+  --rule: #ddd6c7;
+  --rule-light: #ece7da;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  background-image:
+    radial-gradient(at 20% 0%, rgba(122, 139, 111, 0.05) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, rgba(181, 87, 58, 0.04) 0px, transparent 50%);
+  color: var(--ink);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
