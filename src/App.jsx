@@ -1,337 +1,253 @@
-.page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 6vh 20px 8vh;
-}
+import { useState, useEffect, useRef } from "react";
+import "./App.css";
 
-.sheet {
-  width: 100%;
-  max-width: 560px;
-}
+const STORAGE_KEY = "tasks.v1";
 
-/* ---------- Masthead ---------- */
-
-.masthead {
-  margin-bottom: 36px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--rule);
-}
-
-.masthead h1 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(2.4rem, 6vw, 3.1rem);
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  line-height: 1;
-}
-
-.dateline {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--graphite);
-  margin-top: 8px;
-}
-
-/* ---------- Add row ---------- */
-
-.add-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 22px;
-}
-
-.add-row input {
-  flex: 1;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--ink);
-  background: var(--paper-raised);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  padding: 13px 16px;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.add-row input::placeholder {
-  color: var(--graphite-light);
-  font-style: italic;
-}
-
-.add-row input:focus-visible {
-  border-color: var(--sage);
-  box-shadow: 0 0 0 3px var(--sage-tint);
-}
-
-.add-row button {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--paper);
-  background: var(--ink);
-  border: none;
-  border-radius: 10px;
-  padding: 0 22px;
-  cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.1s ease;
-}
-
-.add-row button:hover:not(:disabled) {
-  opacity: 0.85;
-}
-
-.add-row button:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
-.add-row button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.add-row button:focus-visible,
-.filter:focus-visible,
-.check:focus-visible,
-.delete:focus-visible,
-.clear:focus-visible {
-  outline: 2px solid var(--sage);
-  outline-offset: 2px;
-}
-
-/* ---------- Filter row ---------- */
-
-.filter-row {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 18px;
-}
-
-.filter {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--graphite);
-  background: none;
-  border: none;
-  border-radius: 7px;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.filter:hover {
-  background: var(--paper-raised);
-}
-
-.filter.active {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-/* ---------- List ---------- */
-
-.list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.empty {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--graphite-light);
-  font-size: 1.02rem;
-  padding: 20px 4px;
-}
-
-.task {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 4px;
-  border-bottom: 1px solid var(--rule-light);
-  position: relative;
-}
-
-.check {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.check svg {
-  width: 100%;
-  height: 100%;
-}
-
-.box {
-  fill: none;
-  stroke: var(--graphite-light);
-  stroke-width: 1.6;
-  transition: stroke 0.15s ease;
-}
-
-.task.done .box {
-  stroke: var(--sage);
-  fill: var(--sage-tint);
-}
-
-.tick {
-  fill: none;
-  stroke: var(--sage);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.text {
-  flex: 1;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--ink);
-  position: relative;
-  cursor: text;
-  word-break: break-word;
-}
-
-.task.done .text {
-  color: var(--graphite-light);
-}
-
-.ink-strike {
-  position: absolute;
-  left: -2%;
-  top: 38%;
-  width: 104%;
-  height: 1.4em;
-  pointer-events: none;
-}
-
-.ink-strike path {
-  fill: none;
-  stroke: var(--clay);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-}
-
-.edit-input {
-  flex: 1;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  color: var(--ink);
-  background: var(--paper-raised);
-  border: 1px solid var(--sage);
-  border-radius: 6px;
-  padding: 4px 8px;
-  outline: none;
-}
-
-.meta {
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--graphite-light);
-  white-space: nowrap;
-}
-
-.delete {
-  flex: none;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-
-.task:hover .delete,
-.task:focus-within .delete {
-  opacity: 1;
-}
-
-.delete svg {
-  width: 11px;
-  height: 11px;
-}
-
-.delete path {
-  stroke: var(--graphite);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-}
-
-.delete:hover {
-  background: var(--clay-tint);
-}
-
-.delete:hover path {
-  stroke: var(--clay);
-}
-
-/* ---------- Tally ---------- */
-
-.tally {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--graphite);
-}
-
-.clear {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.03em;
-  color: var(--graphite);
-  background: none;
-  border: none;
-  text-decoration: underline;
-  text-decoration-color: var(--rule);
-  cursor: pointer;
-  padding: 2px 4px;
-}
-
-.clear:hover {
-  color: var(--clay);
-  text-decoration-color: var(--clay);
-}
-
-/* ---------- Responsive ---------- */
-
-@media (max-width: 480px) {
-  .page {
-    padding: 5vh 14px 6vh;
-  }
-  .meta {
-    display: none;
+function loadTasks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
 }
 
-/* ---------- Reduced motion ---------- */
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
+function saveTasks(tasks) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  } catch {
+    // Storage unavailable (private browsing, quota, etc.) — fail silently,
+    // the list still works for the current session.
   }
+}
+
+function makeId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+// A hand-drawn-feeling strikethrough, drawn fresh (slightly randomized)
+// per task so completed items don't all look machine-stamped identically.
+function InkStrike({ seed }) {
+  const wobble = ((seed % 7) - 3) * 0.6;
+  const path = `M2,${10 + wobble} C 30,${6 - wobble} 70,${14 + wobble} 98,${8 - wobble}`;
+  return (
+    <svg className="ink-strike" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+      <path d={path} />
+    </svg>
+  );
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  return `${day}d ago`;
+}
+
+export default function App() {
+  const [tasks, setTasks] = useState(loadTasks);
+  const [draft, setDraft] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editDraft, setEditDraft] = useState("");
+  const [filter, setFilter] = useState("all"); // all | active | done
+  const inputRef = useRef(null);
+  const editInputRef = useRef(null);
+
+  useEffect(() => {
+    saveTasks(tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    if (editingId && editInputRef.current) {
+      editInputRef.current.focus();
+      editInputRef.current.select();
+    }
+  }, [editingId]);
+
+  function addTask(e) {
+    e.preventDefault();
+    const text = draft.trim();
+    if (!text) return;
+    setTasks((prev) => [
+      { id: makeId(), text, done: false, createdAt: Date.now() },
+      ...prev,
+    ]);
+    setDraft("");
+    inputRef.current?.focus();
+  }
+
+  function toggleTask(id) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
+    );
+  }
+
+  function deleteTask(id) {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }
+
+  function startEdit(task) {
+    setEditingId(task.id);
+    setEditDraft(task.text);
+  }
+
+  function commitEdit(id) {
+    const text = editDraft.trim();
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, text: text || t.text } : t))
+    );
+    setEditingId(null);
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+  }
+
+  function clearCompleted() {
+    setTasks((prev) => prev.filter((t) => !t.done));
+  }
+
+  const doneCount = tasks.filter((t) => t.done).length;
+  const totalCount = tasks.length;
+
+  const visibleTasks = tasks.filter((t) => {
+    if (filter === "active") return !t.done;
+    if (filter === "done") return t.done;
+    return true;
+  });
+
+  return (
+    <div className="page">
+      <main className="sheet">
+        <header className="masthead">
+          <h1>Tasks</h1>
+          <p className="dateline">
+            {new Date().toLocaleDateString(undefined, {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </header>
+
+        <form className="add-row" onSubmit={addTask}>
+          <input
+            ref={inputRef}
+            type="text"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="Write something down…"
+            aria-label="New task"
+            autoFocus
+          />
+          <button type="submit" disabled={!draft.trim()}>
+            Add
+          </button>
+        </form>
+
+        {totalCount > 0 && (
+          <div className="filter-row" role="tablist" aria-label="Filter tasks">
+            {["all", "active", "done"].map((f) => (
+              <button
+                key={f}
+                role="tab"
+                aria-selected={filter === f}
+                className={filter === f ? "filter active" : "filter"}
+                onClick={() => setFilter(f)}
+              >
+                {f === "all" ? "All" : f === "active" ? "To do" : "Done"}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <ul className="list">
+          {visibleTasks.length === 0 && totalCount === 0 && (
+            <li className="empty">
+              Nothing on the page yet — add the first thing on your mind.
+            </li>
+          )}
+          {visibleTasks.length === 0 && totalCount > 0 && (
+            <li className="empty">
+              {filter === "done"
+                ? "Nothing finished yet."
+                : "Nothing left to do — nice work."}
+            </li>
+          )}
+          {visibleTasks.map((task) => (
+            <li key={task.id} className={task.done ? "task done" : "task"}>
+              <button
+                className="check"
+                role="checkbox"
+                aria-checked={task.done}
+                aria-label={task.done ? "Mark as not done" : "Mark as done"}
+                onClick={() => toggleTask(task.id)}
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <rect x="2" y="2" width="16" height="16" rx="3" className="box" />
+                  {task.done && (
+                    <path d="M5.5 10.5 L8.5 13.5 L14.5 6.5" className="tick" />
+                  )}
+                </svg>
+              </button>
+
+              {editingId === task.id ? (
+                <input
+                  ref={editInputRef}
+                  className="edit-input"
+                  value={editDraft}
+                  onChange={(e) => setEditDraft(e.target.value)}
+                  onBlur={() => commitEdit(task.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitEdit(task.id);
+                    if (e.key === "Escape") cancelEdit();
+                  }}
+                />
+              ) : (
+                <span
+                  className="text"
+                  onDoubleClick={() => startEdit(task)}
+                  title="Double-click to edit"
+                >
+                  {task.text}
+                  {task.done && <InkStrike seed={task.id.length + task.text.length} />}
+                </span>
+              )}
+
+              <span className="meta">{timeAgo(task.createdAt)}</span>
+
+              <button
+                className="delete"
+                aria-label={`Delete "${task.text}"`}
+                onClick={() => deleteTask(task.id)}
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M4 4 L12 12 M12 4 L4 12" />
+                </svg>
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        {totalCount > 0 && (
+          <footer className="tally">
+            <span>
+              {doneCount} of {totalCount} done
+            </span>
+            {doneCount > 0 && (
+              <button className="clear" onClick={clearCompleted}>
+                Clear done
+              </button>
+            )}
+          </footer>
+        )}
+      </main>
+    </div>
+  );
 }
